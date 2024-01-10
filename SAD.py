@@ -55,7 +55,7 @@ def useItem(item) :
         status.insert(0.0, currentStatus)
         status.configure(state="disabled")
     elif item=='Fist' :
-        mapImage.configure(dark_image=Image.open(f"map/go{currentMap}.png"))
+        mapImage.configure(dark_image=Image.open(f"./map/go{currentMap}.png"))
         status.configure(state="normal")
         status.delete(0.0, "end")
         status.insert("end", f"{gameOverList[2]}")
@@ -80,13 +80,13 @@ def timeUpdate() :
         status.configure(state="disabled")
         root.after(1000, timeUpdate)
     elif len(mazePath)==len(correctPath) and mazePath!=correctPath :
-        mapImage.configure(dark_image=Image.open("map/go3.png"))
+        mapImage.configure(dark_image=Image.open("./map/go3.png"))
         status.configure(state="normal")
         status.delete(0.0, "end")
         status.insert(0.0, f"{gameOverList[4]}")
         status.configure(state="disabled")
     else :
-        mapImage.configure(dark_image=Image.open("map/go3.png"))
+        mapImage.configure(dark_image=Image.open("./map/go3.png"))
         status.configure(state="normal")
         status.delete(0.0, "end")
         status.insert(0.0, f"{gameOverList[3]}")
@@ -101,7 +101,7 @@ def progress(choice) :
     global timer
     if currentMap == 1 :
         if choice=='2' :
-            mapImage.configure(dark_image=Image.open("map/go1.png"))
+            mapImage.configure(dark_image=Image.open("./map/go1.png"))
             status.configure(state="normal")
             status.delete(0.0, "end")
             status.insert(0.0, f"{gameOverList[0]}")
@@ -110,7 +110,7 @@ def progress(choice) :
         else :
             currentMap += 1
             currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
-            mapImage.configure(dark_image=Image.open(f"map/map{currentMap}.png"))
+            mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
             choice1.configure(text=choiceList[currentMap][0])
             choice2.configure(text=choiceList[currentMap][1])
             status.configure(state="normal")
@@ -119,7 +119,7 @@ def progress(choice) :
             status.configure(state="disabled")
     elif currentMap == 2 :
         if choice=='1' :
-            mapImage.configure(dark_image=Image.open("map/go2.png"))
+            mapImage.configure(dark_image=Image.open("./map/go2.png"))
             status.configure(state="normal")
             status.delete(0.0, "end")
             status.insert(0.0, f"{gameOverList[1]}")
@@ -128,7 +128,7 @@ def progress(choice) :
         else :
             currentMap += 1
             currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
-            mapImage.configure(dark_image=Image.open(f"map/map{currentMap}.png"))
+            mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
             choice1.configure(text=choiceList[currentMap][0])
             choice2.configure(text=choiceList[currentMap][1])
             status.configure(state="normal")
@@ -170,17 +170,21 @@ def progress(choice) :
             status.configure(state="disabled")
         if len(mazePath) == len(correctPath) :
             if mazePath == correctPath :
-                currentMap += 1
-                currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
-                mapImage.configure(dark_image=Image.open(f"map/map{currentMap}.png"))
-                choice1.configure(text=choiceList[currentMap][0])
-                choice2.configure(text=choiceList[currentMap][1])
+                # currentMap += 1
+                # currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
+                # mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
+                # choice1.configure(text=choiceList[currentMap][0])
+                # choice2.configure(text=choiceList[currentMap][1])
+                # status.configure(state="normal")
+                # status.delete(0.0, "end")
+                # status.insert(0.0, currentStatus)
+                # status.configure(state="disabled")
                 status.configure(state="normal")
                 status.delete(0.0, "end")
-                status.insert(0.0, currentStatus)
+                status.insert(0.0, f"You have completed the game so far!")
                 status.configure(state="disabled")
             else :
-                mapImage.configure(dark_image=Image.open("map/go3.png"))
+                mapImage.configure(dark_image=Image.open("./map/go3.png"))
                 status.configure(state="normal")
                 status.delete(0.0, "end")
                 status.insert(0.0, f"{gameOverList[4]}")
@@ -200,7 +204,7 @@ title = ctk.CTkLabel(master=root, text="<search and destroy>", font=("Consolas",
 title.place(relx=0.5, y=0.1, anchor=ctk.N)
 mapFrame = ctk.CTkFrame(master=root)
 mapFrame.place(relx=0.5, rely=0.125, anchor=ctk.N)
-mapImage = ctk.CTkImage(dark_image=Image.open(f"map/map1.png"), size=(200, 200))
+mapImage = ctk.CTkImage(dark_image=Image.open(f"./map/map1.png"), size=(200, 200))
 map = ctk.CTkLabel(master=mapFrame, text="", image=mapImage)
 map.place(relx=0.5, y=0.5, anchor=ctk.N)
 status=ctk.CTkTextbox(master=root, width=600, height=100)
