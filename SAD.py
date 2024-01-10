@@ -16,14 +16,16 @@ textList = [
 There's a sign at the entrance that reads: \'{correctPath}\'.
 You step into the entrance and an alarm goes off. A voice on a loudspeaker says \'Detonation in sixty seconds.\'
 You have to make it out of the maze alive before it blows up.''',
-    '''You have to make it out of the maze alive before it blows up.'''
+    '''You have to make it out of the maze alive before it blows up.''',
+    '''You\'re walking down a hall, when you see a guard point a pistol at you. He says \'You will not interfere. You shall be silenced.\'.'''
 ]
 
 choiceList = [
     ("You're not supposed to see this", "Don't steal my code!"),
     ("Go forward", "'I'm not paid enough for this!'"),
     ("Go up", "Go down"),
-    ("Left", "Right")
+    ("Left", "Right"),
+    ("Run past him", "Surrender")
 ]
 
 gameOverList = [
@@ -39,7 +41,11 @@ And you're not the Doctor.''',
     '''GAME OVER
 You didn't make it out of the maze in time.''',
     '''GAME OVER
-You got lost in the maze.'''
+You got lost in the maze.''',
+    '''GAME OVER
+You got shot.''',
+    '''GAME OVER
+You surrendered.'''
 ]
 
 def useItem(item) :
@@ -60,6 +66,16 @@ def useItem(item) :
         status.delete(0.0, "end")
         status.insert("end", f"{gameOverList[2]}")
         status.configure(state="disabled")
+        if currentMap == 5 :
+            currentMap += 1
+            currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
+            mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
+            choice1.configure(text=choiceList[currentMap][0])
+            choice2.configure(text=choiceList[currentMap][1])
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, currentStatus)
+            status.configure(state="disabled")
     elif inventory[item] == 1 :
         inventory[item] == 'Broken'
         currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
@@ -170,18 +186,14 @@ def progress(choice) :
             status.configure(state="disabled")
         if len(mazePath) == len(correctPath) :
             if mazePath == correctPath :
-                # currentMap += 1
-                # currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
-                # mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
-                # choice1.configure(text=choiceList[currentMap][0])
-                # choice2.configure(text=choiceList[currentMap][1])
-                # status.configure(state="normal")
-                # status.delete(0.0, "end")
-                # status.insert(0.0, currentStatus)
-                # status.configure(state="disabled")
+                currentMap += 1
+                currentStatus = f"{textList[currentMap]}\nINVENTORY: {inventory}"
+                mapImage.configure(dark_image=Image.open(f"./map/map{currentMap}.png"))
+                choice1.configure(text=choiceList[currentMap][0])
+                choice2.configure(text=choiceList[currentMap][1])
                 status.configure(state="normal")
                 status.delete(0.0, "end")
-                status.insert(0.0, f"You have completed the game so far!")
+                status.insert(0.0, currentStatus)
                 status.configure(state="disabled")
             else :
                 mapImage.configure(dark_image=Image.open("./map/go3.png"))
@@ -190,6 +202,21 @@ def progress(choice) :
                 status.insert(0.0, f"{gameOverList[4]}")
                 status.configure(state="disabled")
                 currentMap = 1
+    elif currentMap == 5 :
+        if choice == 1 :
+            mapImage.configure(dark_image=Image.open("./map/go5.png"))
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, f"{gameOverList[5]}")
+            status.configure(state="disabled")
+            currentMap = 1
+        elif choice == 2 :
+            mapImage.configure(dark_image=Image.open("./map/go5.png"))
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, f"{gameOverList[6]}")
+            status.configure(state="disabled")
+            currentMap = 1
 
 inventory = {"Fist":10}
 
