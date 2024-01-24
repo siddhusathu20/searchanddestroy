@@ -191,7 +191,7 @@ This matrix hides an 8-digit code that may be of importance to the planned attac
 Data:\n''',
     f'''ENCRYPTION TYPE: penguincode
 Available information:
-This file is an encoded string of words. In this cipher, \'hello\' is converted to \'••()6 ()9 ••••()9\'
+This file is an encoded string of words. In this cipher, \'hello\' is converted to \'••()6 ()9 ••••()9\'.
 Data:\n''',
     f'''ALL ASSIGNMENTS COMPLETE\nERROR COUNT: {failCount}'''
 ]
