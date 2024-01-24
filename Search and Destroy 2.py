@@ -149,7 +149,7 @@ def advance(ans) :
     else :
         if ans==currentSol :
             currentMap += 1
-            if currentMap < 5 :
+            if currentMap > 4 :
                 chosenPuzzle = random.randint(1, 4)
             else :
                 chosenPuzzle = currentMap
