@@ -1,7 +1,6 @@
 # By Siddharth Jai Gokulan
 
 import customtkinter as ctk
-from PIL import Image
 import random
 
 currentMap = 0
