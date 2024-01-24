@@ -104,76 +104,52 @@ def advance(ans) :
     global currentMap
     global currentStatus
     global failCount
-    if currentMap == 1 :
-        if ans==currentSol :
-            currentMap += 1
-            currentStatus = f"{textList[currentMap]}" + doggycode()
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-        else :
-            failCount += 1
-            currentStatus += f"\n\n[{failCount}] ERROR: File does not match."
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-    elif currentMap == 2 :
-        if ans==currentSol :
-            currentMap += 1
-            currentStatus = f"{textList[currentMap]}" + matrix()
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-        else :
-            failCount += 1
-            currentStatus += f"\n\n[{failCount}] ERROR: File does not match."
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-    elif currentMap == 3 :
-        if str(ans)==str(currentSol) :
-            currentMap += 1
-            currentStatus = f"{textList[currentMap]}"
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-        else :
-            failCount += 1
-            currentStatus += f"\n\n[{failCount}] ERROR: File does not match."
-            status.configure(state="normal")
-            status.delete(0.0, "end")
-            status.insert(0.0, currentStatus)
-            status.configure(state="disabled")
-    elif currentMap == 0 :
+    if currentMap == 0 :
         currentMap += 1
         currentStatus = f"{textList[currentMap]}" + catecode()
         status.configure(state="normal")
         status.delete(0.0, "end")
         status.insert(0.0, currentStatus)
         status.configure(state="disabled")
+    else :
+        if ans==currentSol :
+            currentMap += 1
+            chosenPuzzle = random.randint(1, 3)
+            if chosenPuzzle==3 :
+                currentStatus = f"{textList[3]}" + matrix() + f"\n\nADDITIONAL NOTES: By comparing it with an older version of the file with weaker encryption, we have determined that the first and last digits are {currentSol[0]} and {currentSol[-1]}"
+            elif chosenPuzzle==2 :
+                currentStatus = f"{textList[2]}" + doggycode()
+            elif chosenPuzzle==1 :
+                currentStatus = f"{textList[1]}" + catecode()
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, currentStatus)
+            status.configure(state="disabled")
+        else :
+            failCount += 1
+            currentStatus += f"\n\n[{failCount}] ERROR: File does not match."
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, currentStatus)
+            status.configure(state="disabled")
 
 textList = [
     '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!''',
-    '''FILE 1
+    f'''ENCRYPTION TYPE: catecode
 Available information:
 The file is an encoded string of words with potential significance to the attack.
 A decrypted file that uses the same ciphering or encryption algorithm notes that the word 'hello' is converted to 'f-b•i-i-d•'.
 Data:\n''',
-    '''FILE 2
+    f'''ENCRYPTION TYPE: doggycode
 Available information:
-Similar to the last file, this file is an encoded string of words.
+This file is an encoded string of words.
 The ciphering algorithm is more complex this time, however. In this one, according to information obtained from a similar deciphered file, 'hello' is converted to 'ag-a•j-j-c•b'.
 Data:\n''',
-    f'''FILE 3
+    f'''ENCRYPTION TYPE: matrix
 Available information:
-This matrix hides an 8-digit code. Look in spots with equal row numbers and column numbers.
+This matrix hides an 8-digit code that may be of importance to the planned attack.
 Data:\n''',
-    '''ALL ASSIGNMENTS COMPLETE'''
+    f'''ALL ASSIGNMENTS COMPLETE\nERROR COUNT: {failCount}'''
 ]
 
 currentStatus = f"{textList[currentMap]}"
@@ -185,7 +161,7 @@ root.geometry("800x600")
 root.title("Search and Destroy")
 title = ctk.CTkLabel(master=root, text="<search and destroy>", font=("Consolas", 30))
 title.place(relx=0.5, y=0.1, anchor=ctk.N)
-status=ctk.CTkTextbox(master=root, width=600, height=350)
+status=ctk.CTkTextbox(master=root, width=600, height=350, font=("Consolas", 13))
 status.configure(state="normal")
 status.delete(0.0, "end")
 status.insert(0.0, currentStatus)
