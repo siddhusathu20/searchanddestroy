@@ -6,7 +6,7 @@ import random
 
 currentMap = 0
 currentSol = "None"
-mapCodes = {1:'catecode', 2:'doggycode', 3:'matrix'}
+mapCodes = {1:'catecode', 2:'doggycode', 3:'matrix', 4:'penguincode'}
 failCount = 0
 
 caseAlphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -24,7 +24,12 @@ worDict = {
                  'voice', 'influx', 'cable', 'crank', 'train',
                  'see', 'refuse', 'control', 'lost', 'hope',
                  'love', 'pride', 'hate', 'fear', 'destruction',
-                 'all', 'in', 'its', 'dark', 'eyes']
+                 'all', 'in', 'its', 'dark', 'eyes'],
+    'penguincode':['class', 'freak', 'blank', 'price', 'gauge',
+                   'quits', 'pints', 'brink', 'crux', 'efflux',
+                   'pachinko', 'card', 'graceful', 'landing', 'vessel',
+                   'broken', 'insane', 'ginger', 'beast', 'green',
+                   'physics', 'connection', 'resonance', 'person', 'home']
 }
 
 def doggycode() :
@@ -79,6 +84,37 @@ def catecode() :
             encoded += i
     return encoded
 
+def penguincode() :
+    global currentSol
+    chosenWords = []
+    for i in range(5) :
+        index = random.randint(0, len(worDict['penguincode'])-1)
+        chosenWords.append(worDict['penguincode'][index])
+    toEncode = ""
+    for i in chosenWords :
+        toEncode = toEncode + i + ' '
+    toEncode = toEncode[0:len(toEncode)-1]
+    currentSol = toEncode
+    print(currentSol)
+    encoded = ""
+    for i in range(len(toEncode)) :
+        if toEncode[i] in vowels :
+            if toEncode[i-1] not in consonants :
+                vowelPosition = vowels.index(toEncode[i])+1
+                encoded = encoded + "•"*vowelPosition + "() "
+        elif toEncode[i] in consonants :
+            consonantPosition = consonants.index(toEncode[i])+1
+            if i < len(toEncode)-1 and toEncode[i+1] in vowels :
+                vowelPosition = vowels.index(toEncode[i+1])+1
+                encoded = encoded + "•"*vowelPosition + "(" + "•"*(consonantPosition//10) + ")" + str(consonantPosition%10) + " "
+            else :
+                encoded = encoded + "(" + "•"*(consonantPosition//10) + ")" + str(consonantPosition%10) + " "
+        elif toEncode[i]== ' ' :
+            encoded += '| '
+        else :
+            encoded += toEncode[i]
+    return encoded
+
 def matrix() :
     global currentSol
     toEncode = str(random.randint(10000000, 99999999))
@@ -114,8 +150,13 @@ def advance(ans) :
     else :
         if ans==currentSol :
             currentMap += 1
-            chosenPuzzle = random.randint(1, 3)
-            if chosenPuzzle==3 :
+            if currentMap < 5 :
+                chosenPuzzle = random.randint(1, 4)
+            else :
+                chosenPuzzle = currentMap
+            if chosenPuzzle==4 :
+                currentStatus = f"{textList[4]}" + penguincode()
+            elif chosenPuzzle==3 :
                 currentStatus = f"{textList[3]}" + matrix() + f"\n\nADDITIONAL NOTES: By comparing it with an older version of the file with weaker encryption, we have determined that the first and last digits are {currentSol[0]} and {currentSol[-1]}"
             elif chosenPuzzle==2 :
                 currentStatus = f"{textList[2]}" + doggycode()
@@ -138,17 +179,20 @@ textList = [
     f'''ENCRYPTION TYPE: catecode
 Available information:
 The file is an encoded string of words with potential significance to the attack.
-A decrypted file that uses the same ciphering or encryption algorithm notes that the word 'hello' is converted to 'f-b•i-i-d•'.
+A decrypted file that uses the same ciphering or encryption algorithm notes that the word \'hello\' is converted to \'f-b•i-i-d•\'.
 Data:\n''',
     f'''ENCRYPTION TYPE: doggycode
 Available information:
 This file is an encoded string of words.
-The ciphering algorithm is more complex this time, however. In this one, according to information obtained from a similar deciphered file, 'hello' is converted to 'ag-a•j-j-c•b'.
+In this cipher, according to information obtained from a similar deciphered file, \'hello\' is converted to \'ag-a•j-j-c•b\'.
 Data:\n''',
     f'''ENCRYPTION TYPE: matrix
 Available information:
 This matrix hides an 8-digit code that may be of importance to the planned attack.
 Data:\n''',
+    f'''ENCRYPTION TYPE: penguincode
+Available information:
+This file is an encoded string of words. In this cipher, \'hello\' is converted to \'••()6 ()9 ••••()9\''''
     f'''ALL ASSIGNMENTS COMPLETE\nERROR COUNT: {failCount}'''
 ]
 
