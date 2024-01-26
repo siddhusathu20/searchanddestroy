@@ -247,7 +247,7 @@ Data:\n''',
     f'''ENCRYPTION TYPE: doggycode
 Available information:
 This file is an encoded string of words.
-In this cipher, according to information obtained from a similar deciphered file, \'hello\' is converted to \'ag-a•j-j-c•b\'.
+In this cipher, according to information obtained from a similar deciphered file, \'hello\' is converted to \'ag-a•j-j-c•b\' and \'the lone wolf\' is converted to \'aq-g-a•b bj-c•l-a•c cs-c•j-e-d\'.
 Data:\n''',
     f'''ENCRYPTION TYPE: matrix
 Available information:
@@ -259,7 +259,7 @@ This file is an encoded string of words. In this cipher, \'hello\' is converted 
 Data:\n''',
     f'''ENCRYPTION TYPE: antcode
 Available information:
-This file is a string of words encoded in the most advanced cipher yet. In this cipher, \'hello\' is converted to \'z(z) a(z)g (a)z c(a)z (z)b\'.
+This file is a string of words encoded in the most advanced cipher yet. In this cipher, \'hello\' is converted to \'z(z) a(z)g (a)z c(a)z (z)b\' and \'happy republic day\' is converted to \'z(z) z(z)g (a)c (a)c (b)b (z)b | (z)b a(a)e d(a)c (z)b b(z)j (z)c (z)c | (z)c z(z)d (b)b (z)d\'.
 Data:\n''',
     f'''ALL ASSIGNMENTS COMPLETE'''
 ]
