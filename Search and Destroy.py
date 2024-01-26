@@ -29,8 +29,6 @@ worDict =  ['after', 'once', 'buy', 'come', 'seven',
             'broken', 'insane', 'ginger', 'beast', 'green',
             'physics', 'connection', 'resonance', 'person', 'home']
 
-
-
 def catecode() :
     global currentSol
     global codeCount
@@ -83,7 +81,13 @@ def doggycode() :
                 encodedWord += i
         encodedWord += alphabets[h+1]
         encoded = encoded + encodedWord + " "
-    encoded.strip()
+    encoded = encoded[0:-1]
+    if codeCount[2]==10 :
+        encList = encoded.split(" ")
+        random.shuffle(encList)
+        encoded = ""
+        for encodedWord in encList :
+            encoded = encoded + encodedWord + " "
     codeCount[2]+=5
     return encoded
 
@@ -186,7 +190,13 @@ def antcode() :
             consonantPosition = consonants.index(alphabets[h+1])+1
             encodedWord = encodedWord + "(" + alphabets[consonantPosition//10-1] + ")" + alphabets[consonantPosition%10] + " "
         encoded = encoded + encodedWord + "| "
-    encoded.strip()
+    encoded = encoded[0:-1]
+    if codeCount[5]==10 :
+        encList = encoded.split(" | ")
+        random.shuffle(encList)
+        encoded = ""
+        for encodedWord in encList :
+            encoded = encoded + encodedWord + " | "
     codeCount[5]+=5
     return encoded
 
@@ -285,5 +295,6 @@ answer = ctk.CTkEntry(master=choices, placeholder_text="Enter solution here...")
 answer.grid(row=0, column=0, padx=10, pady=10, sticky=ctk.NSEW)
 next = ctk.CTkButton(master=choices, text="Next", command=lambda: advance(answer.get()))
 next.grid(row=0, column=1, padx=10, pady=10, sticky=ctk.NSEW)
+root.bind("<Return>", lambda ans: advance(answer.get()))
 
 root.mainloop()
