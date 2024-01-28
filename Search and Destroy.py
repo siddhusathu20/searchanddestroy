@@ -1,8 +1,7 @@
 # Search and Destroy
-# Version 1.2
+# Version 1.2.1
 # What's new:
-# - The game now saves your progress in a text file called 'sadsave.txt' located in the same folder as the game file.
-# - The code is now properly commented!
+# You can now give up.
 # By Siddharth Jai Gokulan
 # Please don't use my code without giving me credit!
 
@@ -13,6 +12,8 @@ currentMap = 0 # The file the player is currently on. The name 'currentMap' is a
 currentSol = "None" # The decoded version of the current file.
 codeCount = {1:5, 2:5, 3:8, 4:5, 5:5, 6:10, 7:10, 8:8, 9:10, 10:10} # The number of words/numbers in the current file.
 failCount = 0
+giveUpCount = 0
+currentGiveUpCount = 0
 
 try :
     save = open("sadsave.txt", "r+") # Open an existing save file.
@@ -63,7 +64,6 @@ def catecode() :
         toEncode = toEncode + i + ' '
     toEncode = toEncode[0:len(toEncode)-1]
     currentSol = toEncode
-    print(currentSol)
     encoded = ""
     for i in toEncode :
         if i in vowels :
@@ -90,7 +90,6 @@ def doggycode() :
         toEncode = toEncode + i + ' '
     toEncode = toEncode[0:len(toEncode)-1]
     currentSol = toEncode
-    print(currentSol)
     wordsToEncode = toEncode.split()
     encoded = ""
     encodedWord = ""
@@ -121,7 +120,6 @@ def matrix() :
     global currentSol
     toEncode = str(random.randint(10000000, 99999999))
     currentSol = toEncode
-    print(currentSol)
     encoded = ""
     for i in range(8) :
         for j in range(8) :
@@ -156,7 +154,6 @@ def penguincode() :
         toEncode = toEncode + i + ' '
     toEncode = toEncode[0:len(toEncode)-1]
     currentSol = toEncode
-    print(currentSol)
     encoded = ""
     for i in range(len(toEncode)) :
         if toEncode[i] in vowels :
@@ -192,7 +189,6 @@ def antcode() :
         toEncode = toEncode + i + ' '
     toEncode = toEncode[0:len(toEncode)-1]
     currentSol = toEncode
-    print(currentSol)
     wordsToEncode = toEncode.split()
     encoded = ""
     encodedWord = ""
@@ -239,6 +235,8 @@ def advance(ans) :
     global currentMap
     global currentStatus
     global failCount
+    global giveUpCount
+    global currentGiveUpCount
     # Clearing the save file.
     if currentMap == 0 and ans == "clear" :
         currentMap = 1
@@ -267,17 +265,28 @@ def advance(ans) :
             advance("None")
     # Checking if the game is already completed.
     elif currentMap >= 11 :
-        currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nCongratulations, and thank you for playing!"
+        currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nNUMBER OF TIMES YOU GAVE UP: {giveUpCount}\nCongratulations, and thank you for playing!"
+    # Giving up.
+    elif ans == "giveup" :
+        if currentGiveUpCount == 0 :
+            currentStatus += f"\n\nYOU GAVE UP.\nANSWER: {currentSol}\n{giveUpList[currentMap-1]}"
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, currentStatus)
+            status.configure(state="disabled")
+            giveUpCount += 1
+            currentGiveUpCount += 1
     # Validating answers and proceeding to the next map.
     else :
         if ans==currentSol :
             currentMap += 1
+            currentGiveUpCount = 0
             save.seek(0)
             save.write(f"{currentMap}")
             save.truncate()
             save.seek(0)
             if currentMap >= 11 :
-                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nCongratulations, and thank you for playing!"
+                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nNUMBER OF TIMES YOU GAVE UP: {giveUpCount}\nCongratulations, and thank you for playing!"
                 chosenPuzzle = 0
                 save.seek(0)
                 save.write("1")
@@ -312,7 +321,7 @@ def advance(ans) :
             status.configure(state="disabled")
 
 textList = [
-    '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!\n[Click Next to continue. Type \'clear\' to clear your save file.]''',
+    '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!\n[Click Next to continue. Type \'clear\' to clear your save file.]\n[If you're stuck on a file, type \'giveup\' into the answer box. Note that this comes with consequences.]''',
     f'''ENCRYPTION TYPE: catecode
 Available information:
 The file is an encoded string of words with potential significance to the attack.
@@ -342,6 +351,18 @@ Enter the decoded data in the text box.
 Data:\n''',
     f'''ALL ASSIGNMENTS COMPLETE'''
 ]
+
+giveUpList = ["REALLY? ON THE FIRST FILE?",
+              "I THOUGHT YOU WERE BETTER THAN THIS.",
+              "WHO HIRED YOU AGAIN?",
+              "IF YOU CAN'T DO THIS RIGHT NOW, MIGHT AS WELL GO GET SOME FRESH AIR.",
+              "YOU KNOW WHAT? THIS TIME... I DON'T BLAME YOU.",
+              "OH, COME ON, YOU'VE DONE THIS BEFORE!",
+              "SO YOU DIDN'T LEARN A THING FROM FILE 2?",
+              "YOU'VE GOT THIS FAR AND YOU COULDN'T DECIPHER THE SIMPLEST ONE?",
+              "YOU'VE DONE THIS BEFORE, IT'S JUST LONGER THIS TIME!",
+              "COME ON! RIGHT AT THE END? I THOUGHT YOU'D GO OUT WITH A BANG...",
+              "SICK OF THE JOB, EH?"]
 
 currentStatus = f"{textList[0]}"
 
