@@ -1,17 +1,35 @@
+# Search and Destroy
+# Version 1.2
+# What's new:
+# - The game now saves your progress in a text file called 'sadsave.txt' located in the same folder as the game file.
+# - The code is now properly commented!
 # By Siddharth Jai Gokulan
+# Please don't use my code without giving me credit!
 
-import customtkinter as ctk
+import customtkinter as ctk # Tom Schimansky's customtkinter is used for the UI.
 import random
 
-currentMap = 0
-currentSol = "None"
-codeCount = {1:5, 2:5, 3:8, 4:5, 5:5}
+currentMap = 0 # The file the player is currently on. The name 'currentMap' is a remnant of an older version of the game.
+currentSol = "None" # The decoded version of the current file.
+codeCount = {1:5, 2:5, 3:8, 4:5, 5:5, 6:10, 7:10, 8:8, 9:10, 10:10} # The number of words/numbers in the current file.
 failCount = 0
+
+try :
+    save = open("sadsave.txt", "r+") # Open an existing save file.
+    save.seek(0)
+except :
+    save = open("sadsave.txt", "w+") # Create a save file if it doesn't exist already.
+    save.write("1")
+    save.close()
+    save = open("sadsave.txt", "r+")
+    save.seek(0)
 
 caseAlphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 alphabets = "abcdefghijklmnopqrstuvwxyz"
 vowels = "aeiou"
 consonants = "bcdfghjklmnpqrstvwxyz"
+
+# List of words
 worDict =  ['after', 'once', 'buy', 'come', 'seven',
             'mind', 'computer', 'own', 'excellent', 'ace',
             'trick', 'throne', 'the', 'doctor', 'falls',
@@ -29,11 +47,15 @@ worDict =  ['after', 'once', 'buy', 'come', 'seven',
             'broken', 'insane', 'ginger', 'beast', 'green',
             'physics', 'connection', 'resonance', 'person', 'home']
 
+# Algorithm for catecode
+# Each letter is represented by a pair of characters - a letter and a symbol.
+# A dot (•) after the letter indicates that the represented letter is a vowel, whereas a hyphen (-) indicates that it is a consonant.
+# The letter itself indicates the position of the represented letter in the list of vowels (a-e) or consonants (a-u).
 def catecode() :
     global currentSol
     global codeCount
     chosenWords = []
-    for i in range(codeCount[1]) :
+    for i in range(codeCount[currentMap]) :
         index = random.randint(0, len(worDict)-1)
         chosenWords.append(worDict[index])
     toEncode = ""
@@ -53,11 +75,14 @@ def catecode() :
     codeCount[1]+=5
     return encoded
 
+# Algorithm for doggycode
+# Takes the catecode version of a word, then offsets every vowel pair one letter back and every consonant pair one letter forward.
+# Adds letters at the start and end of a word that indicate the word's position in a sentence/sequence.
 def doggycode() :
     global currentSol
     global codeCount
     chosenWords = []
-    for i in range(codeCount[2]) :
+    for i in range(codeCount[currentMap]) :
         index = random.randint(0, len(worDict)-1)
         chosenWords.append(worDict[index])
     toEncode = ""
@@ -82,15 +107,16 @@ def doggycode() :
         encodedWord += alphabets[h+1]
         encoded = encoded + encodedWord + " "
     encoded = encoded[0:-1]
-    if codeCount[2]==10 :
+    if codeCount[currentMap]==10 :
         encList = encoded.split(" ")
         random.shuffle(encList)
         encoded = ""
         for encodedWord in encList :
             encoded = encoded + encodedWord + " "
-    codeCount[2]+=5
     return encoded
 
+# Algorithm for matrix
+# The code is simply the positions of the letters in the diagonal from the top-left corner to the bottom-right corner.
 def matrix() :
     global currentSol
     toEncode = str(random.randint(10000000, 99999999))
@@ -112,11 +138,17 @@ def matrix() :
         encoded += l
     return encoded
 
+# Algorithm for penguincode
+# Words are split into vowel-consonant pairs (a consonant followed by a vowel) and separated by spaces.
+# The number of dots to the left of the brackets indicates the position of the vowel (1-5:a-e).
+# The number of dots inside the brackets indicates the tens place of the consonant's position.
+# The number to the right of the brackets indicates the units place of the consonant's position.
+# Spaces are indicated by the | symbol.
 def penguincode() :
     global currentSol
     global codeCount
     chosenWords = []
-    for i in range(codeCount[4]) :
+    for i in range(codeCount[currentMap]) :
         index = random.randint(0, len(worDict)-1)
         chosenWords.append(worDict[index])
     toEncode = ""
@@ -142,14 +174,17 @@ def penguincode() :
             encoded += '| '
         else :
             encoded += toEncode[i]
-    codeCount[4]+=5
     return encoded
 
+# Algorithm for antcode
+# Takes the penguincode version of a word, converts the dots and numbers to letters whose position in the alphabet conveys the information the dots and numbers previously did.
+# Offsets every vowel back one letter and every consonant forward one letter.
+# Zero in the tens place is now indicated by 'z' rather than empty brackets.
 def antcode() :
     global currentSol
     global codeCount
     chosenWords = []
-    for i in range(codeCount[5]) :
+    for i in range(codeCount[currentMap]) :
         index = random.randint(0, len(worDict)-1)
         chosenWords.append(worDict[index])
     toEncode = ""
@@ -191,34 +226,63 @@ def antcode() :
             encodedWord = encodedWord + "(" + alphabets[consonantPosition//10-1] + ")" + alphabets[consonantPosition%10] + " "
         encoded = encoded + encodedWord + "| "
     encoded = encoded[0:-1]
-    if codeCount[5]==10 :
+    if codeCount[currentMap]==10 :
         encList = encoded.split(" | ")
         random.shuffle(encList)
         encoded = ""
         for encodedWord in encList :
             encoded = encoded + encodedWord + " | "
-    codeCount[5]+=5
     return encoded
 
+# The function that checks your answers and decides whether to proceed to the next file.
 def advance(ans) :
     global currentMap
     global currentStatus
     global failCount
-    if currentMap == 0 :
-        currentMap += 1
+    # Clearing the save file.
+    if currentMap == 0 and ans == "clear" :
+        currentMap = 1
+        save.seek(0)
+        save.write("1")
+        save.truncate()
+        save.seek(0)
         currentStatus = f"FILE {currentMap}\n{textList[1]}" + catecode()
         status.configure(state="normal")
         status.delete(0.0, "end")
         status.insert(0.0, currentStatus)
         status.configure(state="disabled")
-    elif currentMap == 11 :
-        currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}"
+    # Starting the game
+    elif currentMap == 0 :
+        save.seek(0)
+        savedMap = save.read()
+        if savedMap == "1" :
+            currentMap = 1
+            currentStatus = f"FILE {currentMap}\n{textList[1]}" + catecode()
+            status.configure(state="normal")
+            status.delete(0.0, "end")
+            status.insert(0.0, currentStatus)
+            status.configure(state="disabled")
+        else :
+            currentMap = int(savedMap)-1
+            advance("None")
+    # Checking if the game is already completed.
+    elif currentMap >= 11 :
+        currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nCongratulations, and thank you for playing!"
+    # Validating answers and proceeding to the next map.
     else :
         if ans==currentSol :
             currentMap += 1
-            if currentMap == 11 :
-                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}"
+            save.seek(0)
+            save.write(f"{currentMap}")
+            save.truncate()
+            save.seek(0)
+            if currentMap >= 11 :
+                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nCongratulations, and thank you for playing!"
                 chosenPuzzle = 0
+                save.seek(0)
+                save.write("1")
+                save.truncate()
+                save.seek(0)
             elif currentMap == 10 :
                 chosenPuzzle = 5
             elif currentMap > 5 :
@@ -248,42 +312,47 @@ def advance(ans) :
             status.configure(state="disabled")
 
 textList = [
-    '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!''',
+    '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!\n[Click Next to continue. Type \'clear\' to clear your save file.]''',
     f'''ENCRYPTION TYPE: catecode
 Available information:
 The file is an encoded string of words with potential significance to the attack.
 A decrypted file that uses the same ciphering or encryption algorithm notes that the word \'hello\' is converted to \'f-b•i-i-d•\'.
+Enter the decoded data in the text box.
 Data:\n''',
     f'''ENCRYPTION TYPE: doggycode
 Available information:
 This file is an encoded string of words.
 In this cipher, according to information obtained from a similar deciphered file, \'hello\' is converted to \'ag-a•j-j-c•b\' and \'the lone wolf\' is converted to \'aq-g-a•b bj-c•l-a•c cs-c•j-e-d\'.
+Enter the decoded data in the text box.
 Data:\n''',
     f'''ENCRYPTION TYPE: matrix
 Available information:
 This matrix hides an 8-digit code that may be of importance to the planned attack.
+Enter the decoded data in the text box.
 Data:\n''',
     f'''ENCRYPTION TYPE: penguincode
 Available information:
 This file is an encoded string of words. In this cipher, \'hello\' is converted to \'••()6 ()9 ••••()9\'.
+Enter the decoded data in the text box.
 Data:\n''',
     f'''ENCRYPTION TYPE: antcode
 Available information:
 This file is a string of words encoded in the most advanced cipher yet. In this cipher, \'hello\' is converted to \'z(z) a(z)g (a)z c(a)z (z)b\' and \'happy republic day\' is converted to \'z(z) z(z)g (a)c (a)c (b)b (z)b | (z)b a(a)e d(a)c (z)b b(z)j (z)c (z)c | (z)c z(z)d (b)b (z)d\'.
+Enter the decoded data in the text box.
 Data:\n''',
     f'''ALL ASSIGNMENTS COMPLETE'''
 ]
 
-currentStatus = f"{textList[currentMap]}"
+currentStatus = f"{textList[0]}"
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 root = ctk.CTk()
 root.geometry("800x600")
 root.title("Search and Destroy")
-title = ctk.CTkLabel(master=root, text="<search and destroy>", font=("Consolas", 30))
+title = ctk.CTkLabel(master=root, text="<search and destroy>", font=("Consolas", 30)) # Title text
 title.place(relx=0.5, y=0.1, anchor=ctk.N)
-status=ctk.CTkTextbox(master=root, width=600, height=350, font=("Consolas", 13))
+status=ctk.CTkTextbox(master=root, width=600, height=350, font=("Consolas", 13)) # Data textbox
 status.configure(state="normal")
 status.delete(0.0, "end")
 status.insert(0.0, currentStatus)
@@ -291,10 +360,11 @@ status.configure(state="disabled")
 status.place(relx=0.5, rely=0.125, anchor=ctk.N)
 choices = ctk.CTkFrame(master=root)
 choices.place(relx=0.5, rely=0.85, anchor=ctk.N)
-answer = ctk.CTkEntry(master=choices, placeholder_text="Enter solution here...")
+answer = ctk.CTkEntry(master=choices, placeholder_text="Type here...") # Answer entry
 answer.grid(row=0, column=0, padx=10, pady=10, sticky=ctk.NSEW)
-next = ctk.CTkButton(master=choices, text="Next", command=lambda: advance(answer.get()))
+next = ctk.CTkButton(master=choices, text="Next", command=lambda: advance(answer.get())) # Next button
 next.grid(row=0, column=1, padx=10, pady=10, sticky=ctk.NSEW)
-root.bind("<Return>", lambda ans: advance(answer.get()))
+root.bind("<Return>", lambda ans: advance(answer.get())) # Binding the Enter key to the advance function
 
 root.mainloop()
+save.close()
