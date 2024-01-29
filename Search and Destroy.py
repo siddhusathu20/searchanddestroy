@@ -1,7 +1,8 @@
 # Search and Destroy
-# Version 1.2.1
+# Version 1.2.2
 # What's new:
-# You can now give up.
+# - Saving updated - your fail count and give-up count are now saved (in separate files).
+# - Some text changes for polish since I might present this version to my school as this year's project!
 # By Siddharth Jai Gokulan
 # Please don't use my code without giving me credit!
 
@@ -15,15 +16,32 @@ failCount = 0
 giveUpCount = 0
 currentGiveUpCount = 0
 
+# I have different save files for the three counters only because it was the easiest way... I should definitely fix that someday, but I want to complete the save implementation as soon as possible.
 try :
-    save = open("sadsave.txt", "r+") # Open an existing save file.
-    save.seek(0)
+    save1 = open("sadsave1.txt", "r+") # Open existing save files.
+    save1.seek(0)
+    save2 = open("sadsave2.txt", "r+")
+    save2.seek(0)
+    failCount = int(save2.read())
+    save3 = open("sadsave3.txt", "r+")
+    save3.seek(0)
+    giveUpCount = int(save3.read())
 except :
-    save = open("sadsave.txt", "w+") # Create a save file if it doesn't exist already.
-    save.write("1")
-    save.close()
-    save = open("sadsave.txt", "r+")
-    save.seek(0)
+    save1 = open("sadsave1.txt", "w+") # Create save files if they don't already exist.
+    save1.write("1")
+    save1.close()
+    save1 = open("sadsave1.txt", "r+")
+    save1.seek(0)
+    save2 = open("sadsave2.txt", "w+")
+    save2.write("0")
+    save2.close()
+    save2 = open("sadsave2.txt", "r+")
+    save2.seek(0)
+    save3 = open("sadsave3.txt", "w+")
+    save3.write("0")
+    save3.close()
+    save3 = open("sadsave3.txt", "r+")
+    save3.seek(0)
 
 caseAlphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 alphabets = "abcdefghijklmnopqrstuvwxyz"
@@ -237,13 +255,21 @@ def advance(ans) :
     global failCount
     global giveUpCount
     global currentGiveUpCount
-    # Clearing the save file.
+    # Clearing the save files.
     if currentMap == 0 and ans == "clear" :
         currentMap = 1
-        save.seek(0)
-        save.write("1")
-        save.truncate()
-        save.seek(0)
+        save1.seek(0)
+        save1.write("1")
+        save1.truncate()
+        save1.seek(0)
+        save2.seek(0)
+        save2.write("0")
+        save2.truncate()
+        save2.seek(0)
+        save3.seek(0)
+        save3.write("0")
+        save3.truncate()
+        save3.seek(0)
         currentStatus = f"FILE {currentMap}\n{textList[1]}" + catecode()
         status.configure(state="normal")
         status.delete(0.0, "end")
@@ -251,8 +277,8 @@ def advance(ans) :
         status.configure(state="disabled")
     # Starting the game
     elif currentMap == 0 :
-        save.seek(0)
-        savedMap = save.read()
+        save1.seek(0)
+        savedMap = save1.read()
         if savedMap == "1" :
             currentMap = 1
             currentStatus = f"FILE {currentMap}\n{textList[1]}" + catecode()
@@ -265,7 +291,7 @@ def advance(ans) :
             advance("None")
     # Checking if the game is already completed.
     elif currentMap >= 11 :
-        currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nNUMBER OF TIMES YOU GAVE UP: {giveUpCount}\nCongratulations, and thank you for playing!"
+        pass
     # Giving up.
     elif ans == "giveup" :
         if currentGiveUpCount == 0 :
@@ -281,17 +307,27 @@ def advance(ans) :
         if ans==currentSol :
             currentMap += 1
             currentGiveUpCount = 0
-            save.seek(0)
-            save.write(f"{currentMap}")
-            save.truncate()
-            save.seek(0)
+            save1.seek(0)
+            save1.write(f"{currentMap}")
+            save1.truncate()
+            save1.seek(0)
             if currentMap >= 11 :
-                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nNUMBER OF TIMES YOU GAVE UP: {giveUpCount}\nCongratulations, and thank you for playing!"
+                currentStatus = currentStatus = f"{textList[6]}\nERROR COUNT: {failCount}\nNUMBER OF TIMES YOU GAVE UP: {giveUpCount}\nCongratulations, and thank you for playing!\nCome back later for a new set of files! Try speedrunning the game!"
                 chosenPuzzle = 0
-                save.seek(0)
-                save.write("1")
-                save.truncate()
-                save.seek(0)
+                save1.seek(0)
+                save1.write("1")
+                save1.truncate()
+                save1.seek(0)
+                save2.seek(0)
+                save2.write("0")
+                save2.truncate()
+                save2.seek(0)
+                save3.seek(0)
+                save3.write("0")
+                save3.truncate()
+                save3.seek(0)
+                failCount = 0
+                giveUpCount = 0
             elif currentMap == 10 :
                 chosenPuzzle = 5
             elif currentMap > 5 :
@@ -321,7 +357,7 @@ def advance(ans) :
             status.configure(state="disabled")
 
 textList = [
-    '''You are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!\n[Click Next to continue. Type \'clear\' to clear your save file.]\n[If you're stuck on a file, type \'giveup\' into the answer box. Note that this comes with consequences.]''',
+    '''WELCOME TO SEARCH AND DESTROY!\nYou are a detective and have to find details pertaining to a planned attack from some encrypted files in order to intercept the attack. Get to work!\n[Click Next to continue. Type \'clear\' to clear your save file.]\n[If you're stuck on a file, type \'giveup\' into the answer box. Note that this comes with consequences.]''',
     f'''ENCRYPTION TYPE: catecode
 Available information:
 The file is an encoded string of words with potential significance to the attack.
@@ -349,7 +385,7 @@ Available information:
 This file is a string of words encoded in the most advanced cipher yet. In this cipher, \'hello\' is converted to \'z(z) a(z)g (a)z c(a)z (z)b\' and \'happy republic day\' is converted to \'z(z) z(z)g (a)c (a)c (b)b (z)b | (z)b a(a)e d(a)c (z)b b(z)j (z)c (z)c | (z)c z(z)d (b)b (z)d\'.
 Enter the decoded data in the text box.
 Data:\n''',
-    f'''ALL ASSIGNMENTS COMPLETE'''
+    f'''ALL FILES DECODED'''
 ]
 
 giveUpList = ["REALLY? ON THE FIRST FILE?",
@@ -388,4 +424,14 @@ next.grid(row=0, column=1, padx=10, pady=10, sticky=ctk.NSEW)
 root.bind("<Return>", lambda ans: advance(answer.get())) # Binding the Enter key to the advance function
 
 root.mainloop()
-save.close()
+save2.seek(0)
+save2.write(f"{failCount}")
+save2.truncate()
+save2.seek(0)
+save3.seek(0)
+save3.write(f"{giveUpCount}")
+save3.truncate()
+save3.seek(0)
+save1.close()
+save2.close()
+save3.close()
