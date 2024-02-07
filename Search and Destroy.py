@@ -1,9 +1,8 @@
 # Search and Destroy
-# Version 1.2.2
-# What's new:
-# - Saving updated - your fail count and give-up count are now saved (in separate files).
-# - Some text changes for polish since I might present this version to my school as this year's project!
+# Version 1.2.2.1
+# This is the version I'm submitting as my school project. Thank you to everyone who's played upto this point!
 # By Siddharth Jai Gokulan
+# Check the project out on GitHub: https://github.com/siddhusathu20/searchanddestroy
 # Please don't use my code without giving me credit!
 
 import customtkinter as ctk # Tom Schimansky's customtkinter is used for the UI.
