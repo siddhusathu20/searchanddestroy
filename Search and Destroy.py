@@ -1,6 +1,6 @@
 # Search and Destroy
 # Version 1.2.2.1
-# This is the version I'm submitting as my school project. Thank you to everyone who's played upto this point!
+# This is the version I'm submitting as my school project. Thank you for being a part of this journey!
 # By Siddharth Jai Gokulan
 # Check the project out on GitHub: https://github.com/siddhusathu20/searchanddestroy
 # Please don't use my code without giving me credit!
